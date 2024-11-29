@@ -1,6 +1,9 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4407238 */
-  src: url('/static/font/iconfont.ttf') format('truetype');
+  /* Color fonts */
+  src: 
+       url('iconfont.woff2?t=1732851001509') format('woff2'),
+       url('iconfont.ttf?t=1732851001509') format('truetype');
 }
 
 .iconfont {
@@ -9,6 +12,154 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-no-fangshai:before {
+  content: "\e60a";
+}
+
+.icon-fangshai:before {
+  content: "\e60b";
+}
+
+.icon-car-washing:before {
+  content: "\e60c";
+}
+
+.icon-no-fangshai1:before {
+  content: "\e60d";
+}
+
+.icon-yumaoqiu:before {
+  content: "\e609";
+}
+
+.icon-jiaonang:before {
+  content: "\e60f";
+}
+
+.icon-no-rain:before {
+  content: "\e691";
+}
+
+.icon-icon-umbrella:before {
+  content: "\e68c";
+}
+
+.icon-wendu:before {
+  content: "\e72e";
+}
+
+.icon-a-yurongfu2:before {
+  content: "\e6d1";
+}
+
+.icon-shineiyundongzhongxin:before {
+  content: "\e6f1";
+}
+
+.icon-car-washing-line:before {
+  content: "\e83a";
+}
+
+.icon-Tshirt:before {
+  content: "\e603";
+}
+
+.icon-chenshan:before {
+  content: "\e604";
+}
+
+.icon-weiyi:before {
+  content: "\e605";
+}
+
+.icon-maoyi:before {
+  content: "\e606";
+}
+
+.icon-dayi:before {
+  content: "\e607";
+}
+
+.icon-jiake:before {
+  content: "\e608";
+}
+
+.icon-yurongfu:before {
+  content: "\e611";
+}
+
+.icon-location:before {
+  content: "\e615";
+}
+
+.icon-arrow-left:before {
+  content: "\e61e";
+}
+
+.icon-tianqi:before {
+  content: "\e623";
+}
+
+.icon-calander:before {
+  content: "\e626";
+}
+
+.icon-close:before {
+  content: "\e635";
+}
+
+.icon-qingtian:before {
+  content: "\e637";
+}
+
+.icon-yintian:before {
+  content: "\e638";
+}
+
+.icon-duoyun:before {
+  content: "\e639";
+}
+
+.icon-yu:before {
+  content: "\e63a";
+}
+
+.icon-yujiaxue:before {
+  content: "\e63b";
+}
+
+.icon-xue:before {
+  content: "\e63c";
+}
+
+.icon-fog:before {
+  content: "\e63d";
+}
+
+.icon-mai:before {
+  content: "\e63e";
+}
+
+.icon-fuchen:before {
+  content: "\e640";
+}
+
+.icon-yangchen:before {
+  content: "\e641";
+}
+
+.icon-shachenbao:before {
+  content: "\e642";
+}
+
+.icon-home:before {
+  content: "\e644";
+}
+
+.icon-arrow-right:before {
+  content: "\e647";
 }
 
 .icon-leaf:before {

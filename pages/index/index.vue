@@ -13,20 +13,130 @@
 		<city-dots></city-dots>
 		
 		<view class="tempurature font-size-140 p-l-10">-14°</view>
-		<view class="flex-start-center">
-			<view class="current-weather p-l-18">小雨</view>
-			<view class="max-temp m-l-10 m-r-10">最高15°</view>
+		<view class="flex-start-center m-l-10">
+			<view class="current-weather">小雨</view>
+			<view class="max-temp m-r-10">最高15°</view>
 			<view class="min-temp">最低8°</view>
 		</view>
-		<view class="air-quality width-110 p-t-6 p-b-6 p-l-14 p-r-14 br-16 m-t-10 m-l-14 m-r-14 bg-000-15 flex-start-center">
+		<view class="air-quality width-110 p-t-6 p-b-6 p-l-14 p-r-14 br-16 m-l-10 m-t-10 bg-000-15 flex-start-center">
 			<uni-icons custom-prefix="iconfont" type="icon-leaf" size="20" color="#fff"></uni-icons>
 			<view class="m-l-4">空气良 53</view>
 		</view>
 		
-		<view class="alarm m-l-14 m-r-14 m-t-30 p-14 bg-000-15 br-16">海淀区气象台29日07时25分发布大风蓝色预警,预计，当前至29日16时，海淀区将有3、4级偏北风，阵风6、7级，请注意防范。</view>
-		<view class="line-chart p-t-20 p-b-20">
+		<view class="alarm m-t-30 m-l-6 m-r-6  p-14 bg-000-15 br-16">海淀区气象台29日07时25分发布大风蓝色预警,预计，当前至29日16时，海淀区将有3、4级偏北风，阵风6、7级，请注意防范。</view>
+		<view class="three-days m-l-6 m-r-6 m-t-10 m-b-10 br-16 bg-000-15">
+			<view class="day-item flex p-16" v-for="(item,index) in list" :key="index">
+				<view class="weather-text flex-1 flex-between-center">
+					<view class="">今天</view>
+					<view class="p-l-10">晴</view>
+					<uni-icons custom-prefix="iconfont" type="icon-tianqi-qing" size="22" class="m-t-2" ></uni-icons>
+				</view>
+				<view class="temprature flex-1 flex-end-center">
+					<view class="min-temp p-r-10">9°</view>
+					<view class="temprature-bar"></view>
+					<view class="max-temp p-l-10">15°</view>
+				</view>
+			</view>
+		</view>
+		
+		<view class=" m-l-6 m-r-6 line-chart bg-fff br-16">
 			<view style="width:100%;height:200px;"><l-echart ref="chartRef"></l-echart></view>
 		</view>
+		<!-- 降水预报 -->
+		<view class="rain-forecast  p-16 m-t-10 m-l-6 m-r-6 bg-fff-15 br-16">
+			<view class="title font-size-12  color-787878">降水预报</view>
+			<view class="flex-between-center">
+				<view class="text">
+					<view class="color-000">2小时内无降雨</view>
+					<view class="color-9C9C9C font-size-12 p-t-50">放心出门吧</view>
+				</view>
+				<view class="satellite-image width-140 height-100 br-16 bg-fff-60"></view>
+			</view>
+		</view>
+		
+		<view class="m-t-10 p-l-6 p-r-6">
+			<view class="flex">
+				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10 m-r-10">
+					<view class="">
+						<view class="item-label color-676767 font-14">紫外线</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">弱</view>
+					</view>
+					<view class="item-progress"></view>
+				</view>
+				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10">
+					<view class="">
+						<view class="item-label color-676767 font-14">湿度</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">60%</view>
+					</view>
+					<view class="item-progress"></view>
+				</view>
+			</view>
+			<view class="flex">
+				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10 m-r-10">
+					<view class="">
+						<view class="item-label color-676767 font-14">体感</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">15°</view>
+					</view>
+					<view class="item-progress"></view>
+				</view>
+				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10">
+					<view class="">
+						<view class="item-label color-676767 font-14">东北风</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">2级</view>
+					</view>
+					<view class="item-progress"></view>
+				</view>
+			</view>
+			<view class="flex">
+				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10 m-r-10">
+					<view class="">
+						<view class="item-label color-676767 font-14">日落</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">5:46</view>
+					</view>
+					<view class="item-progress"></view>
+				</view>
+				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10">
+					<view class="">
+						<view class="item-label color-676767 font-14">气压</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">975</view>
+					</view>
+					<view class="item-progress"></view>
+				</view>
+			</view>
+			
+			<view class="life-assistant m-t-10 br-16 p-20 bg-fff ">
+				<view class="flex-between-center m-b-30">
+					<view class="assistant-item flex-center flex-column">
+						<uni-icons custom-prefix="iconfont" type="icon-yurongfu" size="40" color="#000"></uni-icons>
+						<view class="color-000 p-t-6 font-size-14">适宜厚外套</view>
+					</view>
+					<view class="assistant-item flex-center flex-column">
+						<uni-icons custom-prefix="iconfont" type="icon-no-fangshai" size="34" color="#000"></uni-icons>
+						<view class="color-000 p-t-6 font-size-14">无需防晒</view>
+					</view>
+					<view class="assistant-item flex-center flex-column">
+						<uni-icons custom-prefix="iconfont" type="icon-shineiyundongzhongxin" size="40" color="#000"></uni-icons>
+						<view class="color-000 p-t-6 font-size-14">宜室内运动</view>
+					</view>
+				</view>
+				<view class="flex-between-center">
+					<view class="assistant-item flex-center flex-column">
+						<uni-icons custom-prefix="iconfont" type="icon-car-washing" size="32" color="#000"></uni-icons>
+						<view class="color-000 p-t-6 font-size-14">适宜洗车</view>
+					</view>
+					<view class="assistant-item flex-center flex-column">
+						<uni-icons custom-prefix="iconfont" type="icon-no-rain" size="36" color="#000"></uni-icons>
+						<view class="color-000 p-t-6 font-size-14">不用带伞</view>
+					</view>
+					<view class="assistant-item flex-center flex-column">
+						<uni-icons custom-prefix="iconfont" type="icon-jiaonang" size="36" color="#000"></uni-icons>
+						<view class="color-000 p-t-6 font-size-14">较易感冒</view>
+					</view>
+				</view>
+			</view>
+			
+		</view>
+		
 	</view>
 </template>
 <script setup>
@@ -35,6 +145,8 @@
 	import * as echarts from 'echarts'
 	import { onMounted, ref, nextTick } from 'vue';
 	
+	
+	const list = ref([1,2,3])
 	const chartRef = ref(null)
 	//这里请求服务器拿到数据
 	const res = {
@@ -117,7 +229,7 @@
 			
 </script>
 
-<style>
+<style lang="scss" scoped>
 	.content {
 		min-height: 100vh;
 		background: linear-gradient(#75CCF6, #75CCF6 10% );
@@ -128,6 +240,14 @@
 		}
 		.tempurature{
 			font-family: 'Times New Roman', serif;
+		}
+		.day-item{
+			border-bottom-width: 1px;
+			border-bottom-style: solid;
+			border-bottom-color: rgba(255,255,255,0.3);
+			&:last-child {
+				border-bottom: none;
+			}
 		}
 		.line-chart{
 			overflow-x: auto;
