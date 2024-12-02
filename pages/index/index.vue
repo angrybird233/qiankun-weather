@@ -6,7 +6,7 @@
 				<view class="current-location">西安市 雁塔区</view>
 			</view>
 			<view class="flex-end-center">
-				<uni-icons type="plusempty" size="28" color="#fff"></uni-icons>
+				<uni-icons type="plusempty" size="28" color="#fff" @click="goAddCity"></uni-icons>
 				<uni-icons type="more-filled" class="icon-action m-l-10" size="28" color="#fff"></uni-icons>
 			</view>
 		</view>
@@ -141,13 +141,64 @@
 </template>
 <script setup>
 	// import * as echarts from '@/uni_modules/lime-echart/static/echarts.min.js'
-	import CityDots from '../../components/city-dots/index.vue';
+	import CityDots from '@/components/city-dots/index.vue';
 	import * as echarts from 'echarts'
-	import { onMounted, ref, nextTick } from 'vue';
-	
+	import { onMounted, ref, reactive, nextTick } from 'vue';
+	import {
+		getRealTimeWeather,
+		getThreeDaysWeather,
+		getSevenDaysWeather,
+		getWeatherAlert,
+		getLifeIndices,
+		getAirQuality,
+		getSolarRadiation
+	} from '@/apis/home.js'
 	
 	const list = ref([1,2,3])
 	const chartRef = ref(null)
+	let longitude,latitude;
+	const realTimeWeather = reactive({});
+	
+	
+	
+	
+	const getCurrentLocation = () => {
+		uni.getLocation({
+			type: 'jcg-02',
+			success: (res) => {
+				console.log('当前位置的经度：' + res.longitude);
+				console.log('当前位置的纬度：' + res.latitude);
+				if(res.longitude && res.latitude) {
+					longitude =  res.longitude;
+					latitude =  res.latitude;
+					getNowWeather();
+				}
+			}
+		});
+	};
+	
+	
+	const getNowWeather = async () => {
+		try{
+			// const params = { latitude: 34.14, longitude: 108.54 };
+			const params = {location: `${longitude},${latitude}`}
+			const res = await getRealTimeWeather(params);
+			console.log("res", res)
+		}catch(e){
+			console.log('error', e);
+			//TODO handle the exception
+		}
+	}
+	
+	const goAddCity = () => {
+		uni.navigateTo({
+			url: '/pages/add-city/add-city'
+		})
+	}
+	
+	
+	
+	
 	//这里请求服务器拿到数据
 	const res = {
 		//x轴数据
@@ -223,7 +274,8 @@
 	}
 	
 	onMounted(() => {
-		initCharts()
+		getCurrentLocation();
+		initCharts();
 	})
 				
 			

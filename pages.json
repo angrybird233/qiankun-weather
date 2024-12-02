@@ -5,6 +5,20 @@
 			"style": {
 				"navigationBarTitleText": "天气"
 			}
+		},
+		{
+			"path" : "pages/add-city/add-city",
+			"style" : 
+			{
+				"navigationBarTitleText" : "添加城市"
+			}
+		},
+		{
+			"path" : "pages/tools/tools",
+			"style" : 
+			{
+				"navigationBarTitleText" : "工具集"
+			}
 		}
 	],
 	"globalStyle": {
