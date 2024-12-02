@@ -3,7 +3,7 @@
 		<view class="header-view flex-between-center">
 			<view class="flex-start-center">
 				<uni-icons type="location-filled" size="28" color="#fff"></uni-icons>
-				<view class="current-location">西安市 雁塔区</view>
+				<view class="current-location">{{realTimeInfo.city}}市 {{ realTimeInfo.area }}区</view>
 			</view>
 			<view class="flex-end-center">
 				<uni-icons type="plusempty" size="28" color="#fff" @click="goAddCity"></uni-icons>
@@ -12,11 +12,11 @@
 		</view>
 		<city-dots></city-dots>
 		
-		<view class="tempurature font-size-140 p-l-10">-14°</view>
+		<view class="tempurature font-size-140 p-l-10">{{realTimeInfo.temp}}°</view>
 		<view class="flex-start-center m-l-10">
-			<view class="current-weather">小雨</view>
-			<view class="max-temp m-r-10">最高15°</view>
-			<view class="min-temp">最低8°</view>
+			<view class="current-weather m-r-10">{{realTimeInfo.text}}</view>
+			<view class="max-temp m-r-10">最高{{realTimeInfo.tempMax}}°</view>
+			<view class="min-temp">最低{{realTimeInfo.tempMin}}°</view>
 		</view>
 		<view class="air-quality width-110 p-t-6 p-b-6 p-l-14 p-r-14 br-16 m-l-10 m-t-10 bg-000-15 flex-start-center">
 			<uni-icons custom-prefix="iconfont" type="icon-leaf" size="20" color="#fff"></uni-icons>
@@ -145,6 +145,7 @@
 	import * as echarts from 'echarts'
 	import { onMounted, ref, reactive, nextTick } from 'vue';
 	import {
+		searchCity,
 		getRealTimeWeather,
 		getThreeDaysWeather,
 		getSevenDaysWeather,
@@ -157,9 +158,33 @@
 	const list = ref([1,2,3])
 	const chartRef = ref(null)
 	let longitude,latitude;
-	const realTimeWeather = reactive({});
+	const realTimeInfo = reactive({
+		city: "",
+		area: "",
+		temp: 0,
+		text: "",
+		tempMin: 0,
+		tempMax: 0,
+		airQuality: 0,
+		airQualityText: ""
+	})
 	
-	
+	const getCity = async () => {
+		try{
+			const params = {location: `${longitude},${latitude}`}
+			const res = await searchCity(params);
+			console.log('getCity', res);
+			if(res && res.data) {
+				const {location} = res.data;
+				const {adm2, name, updateTime} = location[0];
+				realTimeInfo.city = adm2;
+				realTimeInfo.area = name;
+				realTimeInfo.updateAt = updateTime 
+			}
+		}catch(err){
+			console.log(err)
+		}
+	}
 	
 	
 	const getCurrentLocation = () => {
@@ -169,8 +194,11 @@
 				console.log('当前位置的经度：' + res.longitude);
 				console.log('当前位置的纬度：' + res.latitude);
 				if(res.longitude && res.latitude) {
-					longitude =  res.longitude;
-					latitude =  res.latitude;
+					// longitude =  res.longitude;
+					// latitude =  res.latitude;
+					longitude =  108.9032;
+					latitude =  34.2407;
+					getCity()
 					getNowWeather();
 				}
 			}
@@ -184,6 +212,11 @@
 			const params = {location: `${longitude},${latitude}`}
 			const res = await getRealTimeWeather(params);
 			console.log("res", res)
+			if(res && res.data && res.data.now) {
+				const {temp,text} = res.data.now;
+				realTimeInfo.temp = temp;
+				realTimeInfo.text = text;
+			}
 		}catch(e){
 			console.log('error', e);
 			//TODO handle the exception

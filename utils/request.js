@@ -22,7 +22,7 @@ const showToast=(title) => {
 const handleErrorResponse = (error) => {
 	const { data, status } = error && error.response;
 	if (error && data && status) {
-		switch (status) {
+		switch (status ) {
 			case 500:
 				showToast("[500]: 服务器错误~");
 				break;
@@ -59,11 +59,15 @@ export const http = (url,{ method="GET", data={}, header, responseType, timeout=
 				},
 		    success: (res) => {
 					uni.hideLoading()
-		      resolve(res)
+					if(res && res.data.code === "200"){
+						resolve(res)
+					}else{
+						reject(res);
+					}
 		    },
 				fail: (error) => {
 					uni.hideLoading();
-					handleErrorResponse();
+					handleErrorResponse(error);
 					reject(error)
 				}
 		});
