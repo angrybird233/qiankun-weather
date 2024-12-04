@@ -1,13 +1,13 @@
 {
-  "hash": "709ae959",
-  "configHash": "6c8db843",
+  "hash": "1ab9d50c",
+  "configHash": "18e8ac99",
   "lockfileHash": "2d881d8c",
-  "browserHash": "c3b30489",
+  "browserHash": "08c1d6a8",
   "optimized": {
     "echarts": {
       "src": "../../../../../node_modules/echarts/index.js",
       "file": "echarts.js",
-      "fileHash": "cb168f44",
+      "fileHash": "b9250cb4",
       "needsInterop": false
     }
   },

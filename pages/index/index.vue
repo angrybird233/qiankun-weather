@@ -16,30 +16,39 @@
 		<view class="flex-start-center m-l-10">
 			<view class="current-weather m-r-10">{{realTimeInfo.text}}</view>
 			<view class="max-temp m-r-10">最高{{realTimeInfo.tempMax}}°</view>
-			<view class="min-temp">最低{{realTimeInfo.tempMin}}°</view>
+			<view class="min-temp">最低{{ realTimeInfo.tempMin }}°</view>
 		</view>
-		<view class="air-quality width-110 p-t-6 p-b-6 p-l-14 p-r-14 br-16 m-l-10 m-t-10 bg-000-15 flex-start-center">
+		<view class="air-quality width-120 p-t-6 p-b-6 p-l-14 p-r-14 br-16 m-l-10 m-t-10 m-b-70 bg-000-15 flex-start-center">
 			<uni-icons custom-prefix="iconfont" type="icon-leaf" size="20" color="#fff"></uni-icons>
-			<view class="m-l-4">空气良 53</view>
+			<view class="m-l-4">空气{{ realTimeInfo.airQuality }} {{ realTimeInfo.airQualityText }}</view>
+			<view class="aqi-color width-14 height-14 br-7 m-l-6 m-t-1" :style="{'background': realTimeInfo.AQI_color }"></view>
 		</view>
 		
-		<view class="alarm m-t-30 m-l-6 m-r-6  p-14 bg-000-15 br-16">海淀区气象台29日07时25分发布大风蓝色预警,预计，当前至29日16时，海淀区将有3、4级偏北风，阵风6、7级，请注意防范。</view>
-		<view class="three-days m-l-6 m-r-6 m-t-10 m-b-10 br-16 bg-000-15">
-			<view class="day-item flex p-16" v-for="(item,index) in list" :key="index">
-				<view class="weather-text flex-1 flex-between-center">
-					<view class="">今天</view>
-					<view class="p-l-10">晴</view>
-					<uni-icons custom-prefix="iconfont" type="icon-tianqi-qing" size="22" class="m-t-2" ></uni-icons>
+		<view class="alarm m-t-30 m-l-6 m-r-6 p-14 bg-000-15 br-16" v-if="alertText">{{ alertText }}</view>
+		<view class="three-days m-l-6 m-r-6 m-t-10 br-16 bg-000-15">
+			<view class="day-item flex p-16" v-for="(item, index) in threeDayList" :key="index">
+				<view class="weather-text flex-1 flex-start-center">
+					<view class="">{{ filterDate(item.fxDate, index)  }}</view>
+					<view class="p-l-10 width-80">{{ isNight ? item.textDay : item.textNight }}</view>
+					<uni-icons 
+						custom-prefix="qweather-icons" 
+						:type=" isNight ? 'qi-'+item.iconNight : 'qi-'+item.iconDay"
+						color="#fff"
+						size="22" class="m-t-2" >
+					</uni-icons>
 				</view>
 				<view class="temprature flex-1 flex-end-center">
-					<view class="min-temp p-r-10">9°</view>
+					<view class="min-temp p-r-10">{{ item.tempMin }}°</view>
 					<view class="temprature-bar"></view>
-					<view class="max-temp p-l-10">15°</view>
+					<view class="max-temp p-l-10">{{ item.tempMax }}°</view>
 				</view>
+			</view>
+			<view class="day-item flex-center p-14 color-#fff">
+				<button class="width-100% bg-fff-15 br-12 color-#fff font-size-14">查看近15日天气预报</button>
 			</view>
 		</view>
 		
-		<view class=" m-l-6 m-r-6 line-chart bg-fff br-16">
+		<view class=" m-l-6 m-r-6 line-chart bg-fff br-16 m-t-10">
 			<view style="width:100%;height:200px;"><l-echart ref="chartRef"></l-echart></view>
 		</view>
 		<!-- 降水预报 -->
@@ -47,8 +56,9 @@
 			<view class="title font-size-12  color-787878">降水预报</view>
 			<view class="flex-between-center">
 				<view class="text">
-					<view class="color-000">2小时内无降雨</view>
-					<view class="color-9C9C9C font-size-12 p-t-50">放心出门吧</view>
+					<view class="color-555">{{ rainInfo.summary }}</view>
+					<view class="color-333 font-size-12 p-t-50" v-if="!rainInfo.isRain">放心出门吧</view>
+					<view class="color-333 font-size-12 p-t-50" v-else>出门记得带伞</view>
 				</view>
 				<view class="satellite-image width-140 height-100 br-16 bg-fff-60"></view>
 			</view>
@@ -59,14 +69,14 @@
 				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10 m-r-10">
 					<view class="">
 						<view class="item-label color-676767 font-14">紫外线</view>
-						<view class="item-value color-191919 font-size-20 p-t-16">弱</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">{{ lifeIndicesInfo.uv }}</view>
 					</view>
 					<view class="item-progress"></view>
 				</view>
 				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10">
 					<view class="">
 						<view class="item-label color-676767 font-14">湿度</view>
-						<view class="item-value color-191919 font-size-20 p-t-16">60%</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">{{lifeIndicesInfo.humidity}}%</view>
 					</view>
 					<view class="item-progress"></view>
 				</view>
@@ -75,14 +85,14 @@
 				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10 m-r-10">
 					<view class="">
 						<view class="item-label color-676767 font-14">体感</view>
-						<view class="item-value color-191919 font-size-20 p-t-16">15°</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">{{lifeIndicesInfo.feelsLike}}°</view>
 					</view>
 					<view class="item-progress"></view>
 				</view>
 				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10">
 					<view class="">
-						<view class="item-label color-676767 font-14">东北风</view>
-						<view class="item-value color-191919 font-size-20 p-t-16">2级</view>
+						<view class="item-label color-676767 font-14">{{ lifeIndicesInfo.windDir }}</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">{{ lifeIndicesInfo.windScale }}级</view>
 					</view>
 					<view class="item-progress"></view>
 				</view>
@@ -91,38 +101,38 @@
 				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10 m-r-10">
 					<view class="">
 						<view class="item-label color-676767 font-14">日落</view>
-						<view class="item-value color-191919 font-size-20 p-t-16">5:46</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">{{ lifeIndicesInfo.sunset }}</view>
 					</view>
 					<view class="item-progress"></view>
 				</view>
 				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10">
 					<view class="">
 						<view class="item-label color-676767 font-14">气压</view>
-						<view class="item-value color-191919 font-size-20 p-t-16">975</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">{{lifeIndicesInfo.pressure }}</view>
 					</view>
 					<view class="item-progress"></view>
 				</view>
 			</view>
 			
-			<view class="life-assistant m-t-10 br-16 p-20 bg-fff ">
-				<view class="flex-between-center m-b-30">
+			<view class="life-assistant m-t-10 br-16 p-t-20 p-b-20 bg-fff ">
+				<view class="flex-around-center m-b-30">
 					<view class="assistant-item flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-yurongfu" size="40" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">适宜厚外套</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.drsg }}</view>
 					</view>
 					<view class="assistant-item flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-no-fangshai" size="34" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">无需防晒</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.spi }}</view>
 					</view>
 					<view class="assistant-item flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-shineiyundongzhongxin" size="40" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">宜室内运动</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.sport }}</view>
 					</view>
 				</view>
-				<view class="flex-between-center">
+				<view class="flex-around-center">
 					<view class="assistant-item flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-car-washing" size="32" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">适宜洗车</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.cw }}</view>
 					</view>
 					<view class="assistant-item flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-no-rain" size="36" color="#000"></uni-icons>
@@ -130,9 +140,14 @@
 					</view>
 					<view class="assistant-item flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-jiaonang" size="36" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">较易感冒</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.flu }}感冒</view>
 					</view>
 				</view>
+			</view>
+			
+			<view class="footer flex-center p-t-10 p-b-20 font-size-12">
+				<view class="color-000">气象数据来自</view>
+				<view class="color-blue m-l-4" @click="goDetail">和风天气</view>
 			</view>
 			
 		</view>
@@ -143,7 +158,7 @@
 	// import * as echarts from '@/uni_modules/lime-echart/static/echarts.min.js'
 	import CityDots from '@/components/city-dots/index.vue';
 	import * as echarts from 'echarts'
-	import { onMounted, ref, reactive, nextTick } from 'vue';
+	import { onMounted, ref, reactive, nextTick, computed, } from 'vue';
 	import {
 		searchCity,
 		getRealTimeWeather,
@@ -152,28 +167,57 @@
 		getWeatherAlert,
 		getLifeIndices,
 		getAirQuality,
-		getSolarRadiation
+		getRainBroadcast,
+		getSunriseAndSunset
 	} from '@/apis/home.js'
 	
 	const list = ref([1,2,3])
 	const chartRef = ref(null)
+	const alertText = ref(null)
 	let longitude,latitude;
 	const realTimeInfo = reactive({
 		city: "",
 		area: "",
 		temp: 0,
+		icon: "",
 		text: "",
 		tempMin: 0,
 		tempMax: 0,
 		airQuality: 0,
-		airQualityText: ""
+		airQualityText: "",
+		fxLink:""
 	})
+	let threeDayList = ref([]);
 	
-	const getCity = async () => {
+	
+	// 获取当前位置坐标
+	const getCurrentLocation = () => {
+		uni.getLocation({
+			type: 'jcg-02',
+			success: (res) => {
+				console.log('当前位置的经度：' + res.longitude);
+				console.log('当前位置的纬度：' + res.latitude);
+				if(res.longitude && res.latitude) {
+					// longitude =  res.longitude;
+					// latitude =  res.latitude;
+					longitude =  108.9032;
+					latitude =  34.2407;
+					getCityByLngLat();
+					getNowWeather();
+					getAirQualityInfo();
+					getThreeDaysWeatherInfo();
+					getWeatherAlertInfo();
+					getRainBroadcastInfo();
+					getLifeIndicesData()
+				}
+			}
+		});
+	};
+	// 通过经纬度获取城市信息
+	const getCityByLngLat = async () => {
 		try{
 			const params = {location: `${longitude},${latitude}`}
 			const res = await searchCity(params);
-			console.log('getCity', res);
 			if(res && res.data) {
 				const {location} = res.data;
 				const {adm2, name, updateTime} = location[0];
@@ -186,36 +230,23 @@
 		}
 	}
 	
-	
-	const getCurrentLocation = () => {
-		uni.getLocation({
-			type: 'jcg-02',
-			success: (res) => {
-				console.log('当前位置的经度：' + res.longitude);
-				console.log('当前位置的纬度：' + res.latitude);
-				if(res.longitude && res.latitude) {
-					// longitude =  res.longitude;
-					// latitude =  res.latitude;
-					longitude =  108.9032;
-					latitude =  34.2407;
-					getCity()
-					getNowWeather();
-				}
-			}
-		});
-	};
-	
-	
+	// 获取当前天气信息
 	const getNowWeather = async () => {
 		try{
-			// const params = { latitude: 34.14, longitude: 108.54 };
 			const params = {location: `${longitude},${latitude}`}
 			const res = await getRealTimeWeather(params);
 			console.log("res", res)
 			if(res && res.data && res.data.now) {
-				const {temp,text} = res.data.now;
+				const {temp, text, icon, windDir,windScale,pressure,feelsLike,humidity } = res.data.now;
 				realTimeInfo.temp = temp;
 				realTimeInfo.text = text;
+				realTimeInfo.icon = icon;
+				realTimeInfo.fxLink = res.data.fxLink;
+				lifeIndicesInfo.windDir = windDir
+				lifeIndicesInfo.windScale = windScale
+				lifeIndicesInfo.pressure = pressure
+				lifeIndicesInfo.feelsLike = feelsLike
+				lifeIndicesInfo.humidity = humidity
 			}
 		}catch(e){
 			console.log('error', e);
@@ -228,9 +259,134 @@
 			url: '/pages/add-city/add-city'
 		})
 	}
+	const goDetail = () => {
+		if(realTimeInfo.fxLink){
+			location.href = realTimeInfo.fxLink
+		}
+	}
 	
+	const isNight = computed(() => new Date().getHours() >= 20 );
+	const filterDate = (date, index) => {
+		const weekDays = ["日", "一", "二", "三", "四", "五", "六"];  
+		const day = new Date(date).getDay();  
+		if(index === 0) return '今天';
+		if(index === 1) return '明天';
+		if(index === 2) return '周'+ weekDays[day]
+	}
+	// 获取近三天天气
+	const getThreeDaysWeatherInfo = async ()=> {
+		try{
+			const params = {location: `${longitude},${latitude}`}
+			const { data } = await getThreeDaysWeather(params);
+			if(data) {
+				threeDayList.value = data.daily;
+				if(data.daily.length){
+					const { tempMax, tempMin } = data.daily[0];
+					realTimeInfo.tempMin = tempMin;
+					realTimeInfo.tempMax = tempMax;
+				}
+			}
+		}catch(err){
+			console.error(err);
+		}
+	}  
 	
+	// 获取空气质量数据
+	const getAirQualityInfo = async () => {
+		try{
+			const params = { longitude, latitude }
+			const { data } = await getAirQuality(params);
+			console.log('data', data);
+			if(data && data.indexes) {
+				const {aqiDisplay,category, color } = data.indexes[0];
+				realTimeInfo.airQuality = aqiDisplay;
+				realTimeInfo.airQualityText = category;
+				realTimeInfo.AQI_color = `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha})`
+			}
+		}catch(err){
+			console.error(err);
+		}
+	}
 	
+	// 获取天气预警信息
+	const getWeatherAlertInfo = async () => {
+		try {
+			const params = {location: `${longitude},${latitude}`}
+			const { data } = await getWeatherAlert(params);
+			if(data && data.warning){
+				const { text } = data.warning;
+				alertText.value = text
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+	
+	let rainInfo = reactive({ summary: "", isRain: false })
+	// 获取未来降水数据
+	const getRainBroadcastInfo = async () => {
+		try {
+			const params = {location: `${longitude},${latitude}`}
+			const {data} = await getRainBroadcast(params);
+			if(data) {
+				const {summary, minutely } = data;
+				const index = minutely && minutely.findIndex(item => Number(item.precip)>0)
+				rainInfo.summary = summary;
+				rainInfo.isRain= index > -1 ? true : false
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+	
+	const indicesRules = [
+		{ type: 1, value: 0, en: 'sport' , level_cn: { 1:'宜户外运动', 2:'较宜户外', 3:'宜室内运动'} },
+		{ type: 2, value: 0, en: 'cw' , level_cn:	{ 1:'适宜洗车', 2:'适宜洗车', 3:'不宜洗车', 4: '不宜洗车'} }	,																										
+		{ type: 3, value: 0, en: 'drsg' , level_cn: { 1:'寒冷', 2:'冷', 3:'较冷', 4:'较舒适', 5: '舒适', 6:'热', 7:'炎热'} },			
+		{ type: 5, value: 0, en: 'uv' , level_cn:  { 1:'弱',2:'弱',3:'中等',4:'强',5:'很强'} },
+		{ type: 9, value: 0, en: 'flu' , level_cn: { 1:'不易', 2:'较易', 3:'易', 4:'极易' } },																								
+		{ type: 16, value: 0, en: 'spi' , level_cn: { 1:'无需防晒', 2:'无需防晒', 3:'注意防晒',  4:'注意防晒',5:'注意防晒'	} }			
+	]
+	const lifeIndicesInfo = reactive({
+		feelsLike: 0, //体感温度
+		windDir: "",// 风向
+		windScale: 1, //风力等级
+		pressure: 0, //气压
+		humidity: 0, //湿度
+		sunset: '5:00', //日落
+		uv: '', // 紫外线指数
+		drsg: '', // 穿衣指数
+		spi: '' , // 防晒指数
+		sport: '', // 运动指数
+		cw: '', //洗车指数
+		flu: '', // 感冒指数
+	})
+	// 获取生活指数
+	const getLifeIndicesData = async () => {
+		try {
+			const params = {location: `${longitude},${latitude}`, type: '1,2,3,5,9,16,'}
+			const {data} = await getLifeIndices(params);
+			if(data && data.daily) {
+				console.log('life', data);
+				data.daily.forEach(item => {
+					indicesRules.forEach(val => {
+						if(Number(item.type) === val.type) {
+							val.value = val.level_cn[Number(item.level)];
+						}
+					})
+				})
+				indicesRules.forEach(item => {
+					for(const key in lifeIndicesInfo){
+						if(key === item.en){
+							lifeIndicesInfo[item.en] = item.value
+						}
+					}
+				})
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
 	
 	//这里请求服务器拿到数据
 	const res = {

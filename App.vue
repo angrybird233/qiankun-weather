@@ -16,4 +16,5 @@
 	/*每个页面公共css */
 	@import './styles/index.scss';
 	@import "./static/font/iconfont.css";
+	@import './static/qweather-font/qweather-icons.css'
 </style>

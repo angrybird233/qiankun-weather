@@ -59,7 +59,7 @@ export const http = (url,{ method="GET", data={}, header, responseType, timeout=
 				},
 		    success: (res) => {
 					uni.hideLoading()
-					if(res && res.data.code === "200"){
+					if(res && (res.data.code === "200" || res.statusCode === 200)){
 						resolve(res)
 					}else{
 						reject(res);

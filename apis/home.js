@@ -61,3 +61,18 @@ export const getSolarRadiation = data => {
 		data
 	})
 }
+
+// 获取分钟级降水
+export const getRainBroadcast = data => {
+	return http(`https://devapi.qweather.com/v7/minutely/5m`,{
+		method: 'GET',
+		data
+	})
+}
+// 获取日出和日落 
+export const getSunriseAndSunset = data => {
+	return http(`https://devapi.qweather.com/v7/astronomy/sun`,{
+		method: 'GET',
+		data
+	})
+}
