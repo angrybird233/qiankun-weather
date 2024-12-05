@@ -43,8 +43,8 @@
 					<view class="max-temp p-l-10">{{ item.tempMax }}°</view>
 				</view>
 			</view>
-			<view class="day-item flex-center p-14 color-#fff">
-				<button class="width-100% bg-fff-15 br-12 color-#fff font-size-14">查看近15日天气预报</button>
+			<view class="day-item flex-center p-14 color-fff">
+				<button class="width-500 bg-fff-15 br-12 color-fff font-size-14">查看近15日天气预报</button>
 			</view>
 		</view>
 		
@@ -219,14 +219,17 @@
 	// 通过经纬度获取城市信息
 	const getCityByLngLat = async () => {
 		try{
-			const params = {location: `${longitude},${latitude}`}
-			const res = await searchCity(params);
-			if(res && res.data) {
-				const {location} = res.data;
-				const {adm2, name, updateTime} = location[0];
-				realTimeInfo.city = adm2;
-				realTimeInfo.area = name;
-				realTimeInfo.updateAt = updateTime 
+			const params = { 
+				mapKey: true, 
+				location: `${latitude},${longitude}`, 
+				poi_options: { radius: 1000 }
+			}
+			const { result } = await searchCity(params);
+			console.log('result', result);
+			if(result && result.ad_info) {
+				const {city, district} = result.ad_info;
+				realTimeInfo.city = city;
+				realTimeInfo.area = district;
 			}
 		}catch(err){
 			console.log(err)
@@ -370,7 +373,6 @@
 			const params = {location: `${longitude},${latitude}`, type: '1,2,3,5,9,16,'}
 			const {data} = await getLifeIndices(params);
 			if(data && data.daily) {
-				console.log('life', data);
 				data.daily.forEach(item => {
 					indicesRules.forEach(val => {
 						if(Number(item.type) === val.type) {
@@ -404,13 +406,11 @@
 					return item
 				}
 			})
-			console.log('date_arr', date_arr);
 			const date = date_arr.join('')
 			const params = {location: `${longitude},${latitude}`, date }
 			const {data} = await getSunriseAndSunset(params);
 			if(data){
 				const { sunset } = data;
-				console.log('sunset', sunset);
 				const hours = new Date(sunset).getHours();
 				const minutes = new Date(sunset).getMinutes()
 				lifeIndicesInfo.sunset = hours +':'+ minutes

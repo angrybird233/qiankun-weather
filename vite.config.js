@@ -21,5 +21,18 @@ export default defineConfig(async() => {
 				'@components': resolve(__dirname, './src/components/'),
 			},
 		},
+		devServer: {
+			"proxy" : {
+				"/api" : {
+						"target" : "https://apis.map.qq.com",
+						"changeOrigin" : true,
+						"secure" : false,
+						"ws": false,
+						"pathRewrite" : {
+								"^/api" : "http://localhost:5173"
+						}
+				}
+			}
+		}
 	}
 });

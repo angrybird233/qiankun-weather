@@ -1,5 +1,6 @@
 
-const key =  import.meta.env.VITE_WEATHER_KEY
+const HEFEN_KEY =  import.meta.env.VITE_WEATHER_KEY;
+const QQ_MAP_KEY = import.meta.env.VITE_QQ_MAP_KEY;
 const requestHeader = {
 	'content-type': 'application/json',
 	// 'Token': '',
@@ -47,7 +48,8 @@ export const http = (url,{ method="GET", data={}, header, responseType, timeout=
 		if(!hideloadingPaths.includes(url)) {
 			showLoading()
 		}
-		if(method === 'GET') data.key = key;
+		if(method === 'GET') data.key = HEFEN_KEY;
+		if(data.mapKey) data.key = QQ_MAP_KEY;
 		uni.request({
 		    url,
 		    data,

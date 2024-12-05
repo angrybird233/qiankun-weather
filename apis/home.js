@@ -2,7 +2,7 @@ import { http } from '@/utils/request.js';
 
 // 城市搜索
 export const searchCity= data => {
-	return http('https://geoapi.qweather.com/v2/city/lookup',{
+	return http('https://apis.map.qq.com/ws/geocoder/v1',{
 		method: 'GET',
 		data
 	})
