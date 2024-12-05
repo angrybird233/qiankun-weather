@@ -1,6 +1,6 @@
 
 const HEFEN_KEY =  import.meta.env.VITE_WEATHER_KEY;
-const QQ_MAP_KEY = import.meta.env.VITE_QQ_MAP_KEY;
+const GAODE_MAP_KEY = import.meta.env.VITE_GAODE_MAP_KEY;
 const requestHeader = {
 	'content-type': 'application/json',
 	// 'Token': '',
@@ -49,7 +49,7 @@ export const http = (url,{ method="GET", data={}, header, responseType, timeout=
 			showLoading()
 		}
 		if(method === 'GET') data.key = HEFEN_KEY;
-		if(data.mapKey) data.key = QQ_MAP_KEY;
+		if(data.mapKey) data.key = GAODE_MAP_KEY;
 		uni.request({
 		    url,
 		    data,
@@ -61,7 +61,7 @@ export const http = (url,{ method="GET", data={}, header, responseType, timeout=
 				},
 		    success: (res) => {
 					uni.hideLoading()
-					if(res && (res.data.code === "200" || res.statusCode === 200)){
+					if(res && (res.data.code === "200" || res.statusCode === 200 || res.data.status === '1')){
 						resolve(res)
 					}else{
 						reject(res);

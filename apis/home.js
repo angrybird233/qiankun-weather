@@ -2,7 +2,7 @@ import { http } from '@/utils/request.js';
 
 // 城市搜索
 export const searchCity= data => {
-	return http('https://apis.map.qq.com/ws/geocoder/v1',{
+	return http('https://restapi.amap.com/v3/geocode/regeo',{
 		method: 'GET',
 		data
 	})

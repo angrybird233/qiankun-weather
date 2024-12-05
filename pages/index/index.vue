@@ -3,7 +3,7 @@
 		<view class="header-view flex-between-center">
 			<view class="flex-start-center">
 				<uni-icons type="location-filled" size="28" color="#fff"></uni-icons>
-				<view class="current-location">{{realTimeInfo.city}}市 {{ realTimeInfo.area }}区</view>
+				<view class="current-location">{{realTimeInfo.city}} {{ realTimeInfo.area }}</view>
 			</view>
 			<view class="flex-end-center">
 				<uni-icons type="plusempty" size="28" color="#fff" @click="goAddCity"></uni-icons>
@@ -200,10 +200,10 @@
 				console.log('当前位置的经度：' + res.longitude);
 				console.log('当前位置的纬度：' + res.latitude);
 				if(res.longitude && res.latitude) {
-					// longitude =  res.longitude;
-					// latitude =  res.latitude;
-					longitude =  108.9032;
-					latitude =  34.2407;
+					longitude =  res.longitude;
+					latitude =  res.latitude;
+					// longitude =  108.9032;
+					// latitude =  34.2407;
 					getCityByLngLat();
 					getNowWeather();
 					getAirQualityInfo();
@@ -221,13 +221,11 @@
 		try{
 			const params = { 
 				mapKey: true, 
-				location: `${latitude},${longitude}`, 
-				poi_options: { radius: 1000 }
+				location: `${longitude},${latitude}`
 			}
-			const { result } = await searchCity(params);
-			console.log('result', result);
-			if(result && result.ad_info) {
-				const {city, district} = result.ad_info;
+			const { data } = await searchCity(params);
+			if(data && data.regeocode && data.regeocode.addressComponent) {
+				const {city, district} = data.regeocode.addressComponent;
 				realTimeInfo.city = city;
 				realTimeInfo.area = district;
 			}
@@ -241,7 +239,6 @@
 		try{
 			const params = {location: `${longitude},${latitude}`}
 			const res = await getRealTimeWeather(params);
-			console.log("res", res)
 			if(res && res.data && res.data.now) {
 				const {temp, text, icon, windDir,windScale,pressure,feelsLike,humidity } = res.data.now;
 				realTimeInfo.temp = temp;
@@ -302,7 +299,6 @@
 		try{
 			const params = { longitude, latitude }
 			const { data } = await getAirQuality(params);
-			console.log('data', data);
 			if(data && data.indexes) {
 				const {aqiDisplay,category, color } = data.indexes[0];
 				realTimeInfo.airQuality = aqiDisplay;

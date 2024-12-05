@@ -82,11 +82,7 @@
             "mode" : "history"
         },
         "sdkConfigs" : {
-            "maps" : {
-                "tencent" : {
-                    "key" : "NDCBZ-YG6RR-PUYWQ-WTIJD-FPB55-DTBT2"
-                }
-            }
+            "maps" : {}
         },
         "devServer" : {
             "port" : 5173

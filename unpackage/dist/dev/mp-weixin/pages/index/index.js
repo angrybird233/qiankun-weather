@@ -39,8 +39,8 @@ const _sfc_main = {
           console.log("当前位置的经度：" + res2.longitude);
           console.log("当前位置的纬度：" + res2.latitude);
           if (res2.longitude && res2.latitude) {
-            longitude = 108.9032;
-            latitude = 34.2407;
+            longitude = res2.longitude;
+            latitude = res2.latitude;
             getCityByLngLat();
             getNowWeather();
             getAirQualityInfo();
@@ -55,14 +55,15 @@ const _sfc_main = {
     };
     const getCityByLngLat = async () => {
       try {
-        const params = { location: `${longitude},${latitude}` };
-        const res2 = await apis_home.searchCity(params);
-        if (res2 && res2.data) {
-          const { location: location2 } = res2.data;
-          const { adm2, name, updateTime } = location2[0];
-          realTimeInfo.city = adm2;
-          realTimeInfo.area = name;
-          realTimeInfo.updateAt = updateTime;
+        const params = {
+          mapKey: true,
+          location: `${longitude},${latitude}`
+        };
+        const { data } = await apis_home.searchCity(params);
+        if (data && data.regeocode && data.regeocode.addressComponent) {
+          const { city, district } = data.regeocode.addressComponent;
+          realTimeInfo.city = city;
+          realTimeInfo.area = district;
         }
       } catch (err) {
         console.log(err);
@@ -72,7 +73,6 @@ const _sfc_main = {
       try {
         const params = { location: `${longitude},${latitude}` };
         const res2 = await apis_home.getRealTimeWeather(params);
-        console.log("res", res2);
         if (res2 && res2.data && res2.data.now) {
           const { temp, text, icon, windDir, windScale, pressure, feelsLike, humidity } = res2.data.now;
           realTimeInfo.temp = temp;
@@ -130,7 +130,6 @@ const _sfc_main = {
       try {
         const params = { longitude, latitude };
         const { data } = await apis_home.getAirQuality(params);
-        console.log("data", data);
         if (data && data.indexes) {
           const { aqiDisplay, category, color } = data.indexes[0];
           realTimeInfo.airQuality = aqiDisplay;
@@ -207,7 +206,6 @@ const _sfc_main = {
         const params = { location: `${longitude},${latitude}`, type: "1,2,3,5,9,16," };
         const { data } = await apis_home.getLifeIndices(params);
         if (data && data.daily) {
-          console.log("life", data);
           data.daily.forEach((item) => {
             indicesRules.forEach((val) => {
               if (Number(item.type) === val.type) {
@@ -239,13 +237,11 @@ const _sfc_main = {
             return item;
           }
         });
-        console.log("date_arr", date_arr);
         const date = date_arr.join("");
         const params = { location: `${longitude},${latitude}`, date };
         const { data } = await apis_home.getSunriseAndSunset(params);
         if (data) {
           const { sunset } = data;
-          console.log("sunset", sunset);
           const hours = new Date(sunset).getHours();
           const minutes = new Date(sunset).getMinutes();
           lifeIndicesInfo.sunset = hours + ":" + minutes;
