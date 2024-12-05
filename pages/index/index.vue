@@ -69,7 +69,7 @@
 				<view class="flex-1 flex-between-center bg-fff br-16 p-20 m-b-10 m-r-10">
 					<view class="">
 						<view class="item-label color-676767 font-14">紫外线</view>
-						<view class="item-value color-191919 font-size-20 p-t-16">{{ lifeIndicesInfo.uv }}</view>
+						<view class="item-value color-191919 font-size-20 p-t-16">{{ lifeIndicesInfo.uv.text }}</view>
 					</view>
 					<view class="item-progress"></view>
 				</view>
@@ -115,32 +115,34 @@
 			</view>
 			
 			<view class="life-assistant m-t-10 br-16 p-t-20 p-b-20 bg-fff ">
-				<view class="flex-around-center m-b-30">
-					<view class="assistant-item flex-center flex-column">
+				<view class="flex m-b-30">
+					<view class="assistant-item flex-1 flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-yurongfu" size="40" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.drsg }}</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.drsg.text }}</view>
 					</view>
-					<view class="assistant-item flex-center flex-column">
+					<view class="assistant-item flex-1 flex-center flex-column">
+						<uni-icons v-if="lifeIndicesInfo.spi.level>=3" custom-prefix="iconfont" type="icon-fangshai" size="34" color="#000"></uni-icons>
 						<uni-icons custom-prefix="iconfont" type="icon-no-fangshai" size="34" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.spi }}</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.spi.text }}</view>
 					</view>
-					<view class="assistant-item flex-center flex-column">
+					<view class="assistant-item flex-1 flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-shineiyundongzhongxin" size="40" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.sport }}</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.sport.text }}</view>
 					</view>
 				</view>
-				<view class="flex-around-center">
-					<view class="assistant-item flex-center flex-column">
+				<view class="flex">
+					<view class="assistant-item flex-1 flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-car-washing" size="32" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.cw }}</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.cw.text }}</view>
 					</view>
-					<view class="assistant-item flex-center flex-column">
-						<uni-icons custom-prefix="iconfont" type="icon-no-rain" size="36" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">不用带伞</view>
+					<view class="assistant-item flex-1 flex-center flex-column">
+						<uni-icons v-if="rainInfo.isRain" custom-prefix="iconfont" type="icon-umbrella" size="36" color="#000"></uni-icons>
+						<uni-icons v-else custom-prefix="iconfont" class="reverse" type="icon-no-rain" size="36" color="#000"></uni-icons>
+						<view class="color-000 p-t-6 font-size-14">{{ rainInfo.isRain? '记得带伞' :'不用带伞' }}</view>
 					</view>
-					<view class="assistant-item flex-center flex-column">
+					<view class="assistant-item flex-1 flex-center flex-column">
 						<uni-icons custom-prefix="iconfont" type="icon-jiaonang" size="36" color="#000"></uni-icons>
-						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.flu }}感冒</view>
+						<view class="color-000 p-t-6 font-size-14">{{ lifeIndicesInfo.flu.text }}感冒</view>
 					</view>
 				</view>
 			</view>
@@ -208,7 +210,8 @@
 					getThreeDaysWeatherInfo();
 					getWeatherAlertInfo();
 					getRainBroadcastInfo();
-					getLifeIndicesData()
+					getLifeIndicesData();
+					getSunriseAndSunsetInfo()
 				}
 			}
 		});
@@ -340,9 +343,9 @@
 	}
 	
 	const indicesRules = [
-		{ type: 1, value: 0, en: 'sport' , level_cn: { 1:'宜户外运动', 2:'较宜户外', 3:'宜室内运动'} },
+		{ type: 1, value: 0, en: 'sport' , level_cn: { 1:'宜户外运动', 2:'宜室内运动', 3:'宜室内运动'} },
 		{ type: 2, value: 0, en: 'cw' , level_cn:	{ 1:'适宜洗车', 2:'适宜洗车', 3:'不宜洗车', 4: '不宜洗车'} }	,																										
-		{ type: 3, value: 0, en: 'drsg' , level_cn: { 1:'寒冷', 2:'冷', 3:'较冷', 4:'较舒适', 5: '舒适', 6:'热', 7:'炎热'} },			
+		{ type: 3, value: 0, en: 'drsg' , level_cn: { 1:'适宜羽绒服', 2:'适宜厚外套', 3:'适宜厚外套', 4:'适宜薄外套', 5: '适宜衬衫', 6:'适宜T恤', 7:'适宜T恤'} },			
 		{ type: 5, value: 0, en: 'uv' , level_cn:  { 1:'弱',2:'弱',3:'中等',4:'强',5:'很强'} },
 		{ type: 9, value: 0, en: 'flu' , level_cn: { 1:'不易', 2:'较易', 3:'易', 4:'极易' } },																								
 		{ type: 16, value: 0, en: 'spi' , level_cn: { 1:'无需防晒', 2:'无需防晒', 3:'注意防晒',  4:'注意防晒',5:'注意防晒'	} }			
@@ -354,12 +357,12 @@
 		pressure: 0, //气压
 		humidity: 0, //湿度
 		sunset: '5:00', //日落
-		uv: '', // 紫外线指数
-		drsg: '', // 穿衣指数
-		spi: '' , // 防晒指数
-		sport: '', // 运动指数
-		cw: '', //洗车指数
-		flu: '', // 感冒指数
+		uv: {text:'', level: 1}, // 紫外线指数
+		drsg: {text:'', level: 1}, // 穿衣指数
+		spi: {text:'', level: 1} , // 防晒指数
+		sport: {text:'', level: 1}, // 运动指数
+		cw: {text:'', level: 1}, //洗车指数
+		flu: {text:'', level: 1}, // 感冒指数
 	})
 	// 获取生活指数
 	const getLifeIndicesData = async () => {
@@ -371,14 +374,15 @@
 				data.daily.forEach(item => {
 					indicesRules.forEach(val => {
 						if(Number(item.type) === val.type) {
-							val.value = val.level_cn[Number(item.level)];
+							val.value = Number(item.level)
 						}
 					})
 				})
 				indicesRules.forEach(item => {
 					for(const key in lifeIndicesInfo){
 						if(key === item.en){
-							lifeIndicesInfo[item.en] = item.value
+							lifeIndicesInfo[item.en].text = item.level_cn[item.value];
+							lifeIndicesInfo[item.en].level = item.value
 						}
 					}
 				})
@@ -388,6 +392,33 @@
 		}
 	}
 	
+	// 获取日出日落时间
+	const getSunriseAndSunsetInfo = async ()=> {
+		try {
+			const now = new Date().toLocaleDateString();
+			let date_arr = now.split('/');
+			date_arr = date_arr.map(item => {
+				if(Number(item) < 10) {
+					return '0'+ item
+				}else{
+					return item
+				}
+			})
+			console.log('date_arr', date_arr);
+			const date = date_arr.join('')
+			const params = {location: `${longitude},${latitude}`, date }
+			const {data} = await getSunriseAndSunset(params);
+			if(data){
+				const { sunset } = data;
+				console.log('sunset', sunset);
+				const hours = new Date(sunset).getHours();
+				const minutes = new Date(sunset).getMinutes()
+				lifeIndicesInfo.sunset = hours +':'+ minutes
+			}
+		} catch (error) {
+			//TODO handle the exception
+		}
+	}
 	//这里请求服务器拿到数据
 	const res = {
 		//x轴数据
@@ -492,6 +523,9 @@
 		}
 		.line-chart{
 			overflow-x: auto;
+		}
+		.reverse{
+			transform: rotate(180deg);
 		}
 	}
 

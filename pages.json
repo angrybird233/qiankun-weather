@@ -19,6 +19,13 @@
 			{
 				"navigationBarTitleText" : "工具集"
 			}
+		},
+		{
+			"path" : "pages/fifteen-days/fifteen-days",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
 		}
 	],
 	"globalStyle": {
